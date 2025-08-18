@@ -4,7 +4,7 @@
 
 ### A. **Regression - Predicting healthcare cost**
 
-* **Goal**: Predict patient treatment cost based on age, diagnosis, length of stay, etc.
+* **Goal**: Predict patient treatment cost based on age, diagnosis, bmi, gender,smokers etc.
 * **Target**: Total cost (continuous variable)
 * **Possible Dataset**:
 

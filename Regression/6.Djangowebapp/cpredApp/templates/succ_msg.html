@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+{% load static %}
+<div class="jumbotron">
+    <h1>Healthcare Cost Prediction </h1>
+    <div class="fieldWrapper">
+      <h2>For the values</h2>
+      <p>Age:{{data_age}}</p>
+      <p>Bmi:{{data_bmi}}</p>
+      <p>children:{{data_child}}</p>
+      <p>Gender (male=1/female=0): {{ data_gender}}</p>
+      <p>Smoker (yes=1/no=0): {{ data_smoke }}</p>
+      <p>Region Southeast (1=yes, 0=no): {{ data_reg }}</p>
+      <br>
+      <h3>Predicted Healthcare Cost:</h3>
+      <p><strong>${{ predicted_cost }}</strong></p>
+      <!-- {% if out == 1 %}
+        <p>You <b>will have</b>  chronic Kidney Disease in the future: <b>Positive</b></p>
+      {% else %}
+        <p>You <b>will not</b> have  chronic Kidney Disease in the future:<b>Negative</b></p>
+
+      {% endif %} -->
+    
+      <a  href="{% url 'cpredApp:cpred' %}">Back to homepage</a>
+      <br>
+    </div>
+</div>
+{% endblock %}

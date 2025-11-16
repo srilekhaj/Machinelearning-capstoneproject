@@ -10,40 +10,59 @@
 
 * [Medical Cost Personal Dataset – Kaggle](https://www.kaggle.com/mirichoi0218/insurance)
 
+
+
 flowchart LR
-subgraph User
-U[User Input Form]
-end
 
+    %% USER INPUT %%%
+    subgraph User
+        U[User Input Form<br>(age, bmi, disease, severity, lifestyle,<br>hospital tier, insurance)]
+    end
 
-subgraph Frontend
-FE[React / Streamlit / Django Templates]
-end
+    %% FRONTEND %%%
+    subgraph Frontend
+        FE[Web UI (Django / Streamlit / React)]
+    end
 
+    U --> FE
 
-U --> FE
-FE --> BE[Backend (Django REST API)]
-BE --> Preproc[Preprocessing & Validation]
-Preproc --> Stage1[Stage-1: Clinical Predictors]
-Stage1 --> Stage1_Out[Predicted: treatment_type, patient_type, LOS]
-Stage1_Out --> Stage2[Stage-2: Cost Prediction Model]
-BE --> DB[(Database: Postgres)]
-Preproc --> DB
-Stage2 --> Result[Predicted Charges]
-Result --> FE
-FE --> GitHub[Optional: Save Report / Export JSON]
+    %% BACKEND %%%
+    subgraph Backend
+        BE[Django Backend API]
+        Preproc[Preprocessing & Feature Encoding]
+    end
 
+    FE --> BE
+    BE --> Preproc
 
-subgraph ML_Training
-RawData[Raw Historical Dataset]
-DataPipeline[Data Cleaning & FE]
-TrainStage1[Train Models A/B/C]
-TrainStage2[Train Cost Model]
-Evaluate[Evaluation & Explainability]
-Deploy[Export Model Artifacts (.pkl / ONNX)]
-end
+    %% STAGE 1 MODELS %%%
+    subgraph Stage1["Stage-1 ML (Clinical Predictors)"]
+        M1A[Model A: Treatment Type<br>(Classification)]
+        M1B[Model B: Patient Type<br>(Classification)]
+        M1C[Model C: Length of Stay<br>(Regression)]
+    end
 
+    Preproc --> M1A
+    Preproc --> M1B
+    Preproc --> M1C
 
-RawData --> DataPipeline --> TrainStage1 --> Evaluate --> Deploy
-DataPipeline --> TrainStage2 --> Evaluate --> Deploy
-Deploy --> BE
+    M1A --> S1Out
+    M1B --> S1Out
+    M1C --> S1Out
+
+    S1Out[Predicted Clinical Variables<br>• treatment_type<br>• patient_type<br>• length_of_stay]
+
+    %% STAGE 2 MODEL %%%
+    subgraph Stage2["Stage-2 ML (Cost Prediction)"]
+        M2[Final Regression Model (XGBoost / RF)<br>Predicts: charges]
+    end
+
+    S1Out --> M2
+    Preproc --> M2
+
+    M2 --> Result[Predicted Healthcare Charges (₹)]
+
+    %% DB OPTIONAL %%%
+    BE --> DB[(PostgreSQL Database)]
+
+    Result --> FE
